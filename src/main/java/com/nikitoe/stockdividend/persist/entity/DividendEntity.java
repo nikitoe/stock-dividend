@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.persist.entity;
 
+import com.nikitoe.stockdividend.model.Dividend;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,10 +20,17 @@ public class DividendEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String companyId;
+    private Long companyId;
 
     private LocalDateTime date;
 
     private String dividend;
+
+    public DividendEntity(Long companyId, Dividend dividend){
+
+        this.companyId = companyId;
+        this.date = dividend.getDate();
+        this.dividend = dividend.getDividend();
+    }
 
 }
