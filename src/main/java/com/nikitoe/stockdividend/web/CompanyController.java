@@ -3,7 +3,6 @@ package com.nikitoe.stockdividend.web;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.persist.entity.CompanyEntity;
 import com.nikitoe.stockdividend.service.CompanyService;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +22,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CompanyService companyService;
+
     @GetMapping("/autocomplete")
+
+    /**
+     * 키워드 자동완성
+     */
     public ResponseEntity<?> autocomplete(@RequestParam String keyword) {
-        return null;
+        // Trie 자료구조 사용
+        // var result = this.companyService.autoComplete(keyword);
+
+        // Like 연산자 사용
+        var result = this.companyService.getCompanyNamesByKeyword(keyword);
+        return ResponseEntity.ok(result);
     }
 
+
+    /**
+     * 회사 정보 조회(페이징 처리)
+     * @param pageable
+     * @return
+     */
     @GetMapping
     public ResponseEntity<?> searchCompany(final Pageable pageable) {
 
@@ -44,12 +59,12 @@ public class CompanyController {
     public ResponseEntity<?> addCompany(@RequestBody Company request) {
 
         String ticker = request.getTicker().trim();
-        if(ObjectUtils.isEmpty(ticker)){
+        if (ObjectUtils.isEmpty(ticker)) {
             throw new RuntimeException("ticker is empty");
         }
 
         Company company = this.companyService.save(ticker);
-
+        this.companyService.addAutocompleteKeyword(company.getName());
 
         return ResponseEntity.ok(company);
     }
