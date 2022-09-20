@@ -2,6 +2,7 @@ package com.nikitoe.stockdividend.scheduler;
 
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.ScrapedResult;
+import com.nikitoe.stockdividend.model.constants.CacheKey;
 import com.nikitoe.stockdividend.persist.CompanyRepository;
 import com.nikitoe.stockdividend.persist.DividendRepository;
 import com.nikitoe.stockdividend.persist.entity.CompanyEntity;
@@ -10,6 +11,7 @@ import com.nikitoe.stockdividend.scraper.Scraper;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +25,9 @@ public class ScraperScheduler {
 
     private final Scraper yahooFinanceScraper;
 
+
     // 일정 주기마다 실행
+    @CacheEvict(value= CacheKey.KEY_FINANCE, allEntries = true)
     @Scheduled(cron = "${scheduler.scrap.yahoo}")
     public void yahooFinanceScheduling() {
 
