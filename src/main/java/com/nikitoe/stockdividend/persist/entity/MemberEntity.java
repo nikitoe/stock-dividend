@@ -1,10 +1,12 @@
 package com.nikitoe.stockdividend.persist.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,22 +36,29 @@ public class MemberEntity implements UserDetails {
 
     private String password;
 
-    @ElementCollection
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
 
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         return this.roles.stream()
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
     }
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.username;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {

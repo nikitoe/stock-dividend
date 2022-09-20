@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.security;
 
+import com.nikitoe.stockdividend.service.MemberService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -17,6 +21,7 @@ public class TokenProvider {
 
     private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60;   // 1 hour
     private static final String KEY_ROLES = "roles";
+    private final MemberService memberService;
 
 
     @Value("${spring.jwt.secret}")
@@ -52,6 +57,12 @@ public class TokenProvider {
     }
 
 
+    public Authentication getAuthentication(String jwt) {
+        UserDetails userDetails = this.memberService.loadUserByUsername(this.getUsername(jwt));
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "",userDetails.getAuthorities());
+    }
+
     public String getUsername(String token) {
         return this.parseClaims(token).getSubject();
     }
@@ -63,9 +74,7 @@ public class TokenProvider {
      * @return
      */
     public boolean validToken(String token) {
-        if (!StringUtils.hasText(token)) {
-            return false;
-        }
+        if (!StringUtils.hasText(token)) return false;
 
         var claims = this.parseClaims(token);
         return !claims.getExpiration().before(new Date());

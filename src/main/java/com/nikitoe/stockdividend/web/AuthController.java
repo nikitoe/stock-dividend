@@ -24,16 +24,16 @@ public class AuthController {
     public ResponseEntity<?> signup(@RequestBody Auth.SignUp request) {
 
         var result = this.memberService.register(request);
+        System.out.println(result);
 
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signup(@RequestBody Auth.SignIn request) {
+    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
 
         var member = this.memberService.authenticate(request);
         var token = this.tokenProvider.generateToken(member.getUsername(), member.getRoles());
-
 
         return ResponseEntity.ok(token);
     }
