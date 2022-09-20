@@ -25,6 +25,9 @@ spring:
     port: 6379
     password: redisPass
 
+  jwt:
+    secret: bmlraXRvZS1zcHJpbmctYm9vdC1zdG9jay1kaXZpZGVuZC1wcm9qZWN0LWp3dC1zZWNyZXQta2V5Cg
+
 scheduler:
   scrap:
     yahoo: "0 0 0 * * *"
