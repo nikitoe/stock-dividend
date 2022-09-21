@@ -26,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String TOKEN_PREFIX = "Bearer ";
 
     private final TokenProvider tokenProvider;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
@@ -33,9 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = this.resolveTokenFromRequest(request);
 
         // token 유효성 검증
-        if(StringUtils.hasText(token) && this.tokenProvider.validToken(token)){
+        if (StringUtils.hasText(token) && this.tokenProvider.validToken(token)) {
             Authentication auth = this.tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            log.info(String.format("[%s] -> %s", this.tokenProvider.getUsername(token),
+                request.getRequestURI()));
+
         }
 
         filterChain.doFilter(request, response);
@@ -47,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // token의 구조 유형 유효성 검사
         String token = request.getHeader(TOKEN_HEADER);
 
-        if(!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)){
+        if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
             System.out.println(token.substring(TOKEN_PREFIX.length()));
             return token.substring(TOKEN_PREFIX.length());
         }
