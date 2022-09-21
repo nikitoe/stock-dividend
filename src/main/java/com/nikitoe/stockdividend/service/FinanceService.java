@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.service;
 
+import com.nikitoe.stockdividend.exception.impl.NoCompanyException;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.Dividend;
 import com.nikitoe.stockdividend.model.ScrapedResult;
@@ -31,7 +32,7 @@ public class FinanceService {
 
         // 1. 회사명을 기준으로 회사 정보 조회
         CompanyEntity company = this.companyRepository.findByName(companyName)
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 회사명입니다."));
+            .orElseThrow(() -> new NoCompanyException());
 
         // 2. 조회된 회사Id로 배당금 정보를 조회
         List<DividendEntity> dividendEntities = this.dividendRepository.findAllByCompanyId(

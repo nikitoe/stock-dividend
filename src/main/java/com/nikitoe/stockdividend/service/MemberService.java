@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.service;
 
+import com.nikitoe.stockdividend.exception.impl.AlreadyExistUserException;
 import com.nikitoe.stockdividend.model.Auth;
 import com.nikitoe.stockdividend.persist.MemberRepository;
 import com.nikitoe.stockdividend.persist.entity.MemberEntity;
@@ -31,7 +32,7 @@ public class MemberService implements UserDetailsService {
 
         boolean exists = this.memberRepository.existsByUsername(member.getUsername());
         if (exists) {
-            throw new RuntimeException("이미 사용 중인 아이디 입니다.");
+            throw new AlreadyExistUserException();
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
