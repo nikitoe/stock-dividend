@@ -43,7 +43,6 @@ public class CacheConfig {
             .build();
     }
 
-
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();

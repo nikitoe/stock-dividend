@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.service;
 
+import com.nikitoe.stockdividend.exception.impl.NoCompanyException;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.ScrapedResult;
 import com.nikitoe.stockdividend.persist.CompanyRepository;
@@ -88,5 +89,21 @@ public class CompanyService {
     // 키워드 삭제
     public void deleteAutocompleteKeyword(String keyword) {
         this.trie.remove(keyword);
+    }
+
+
+    public String deleteCompany(String ticker) {
+
+        var company =this.companyRepository.findByTicker(ticker)
+            .orElseThrow(() -> new NoCompanyException());
+
+        // 배당금 정보 삭제
+        this.dividendRepository.deleteAllByCompanyId(company.getId());
+        // 회사 정보 삭제
+        this.companyRepository.delete(company);
+        // trie에 저장된 키워드 삭제
+        this.deleteAutocompleteKeyword(company.getName());
+
+        return company.getName();
     }
 }
