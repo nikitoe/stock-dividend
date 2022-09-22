@@ -93,6 +93,7 @@ public class CompanyController {
     @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> deleteCompany(@PathVariable String ticker) {
         String companyName = this.companyService.deleteCompany(ticker);
+
         // 캐시 정보 삭제
         this.clearFinanceCache(companyName);
 

@@ -2,8 +2,11 @@ package com.nikitoe.stockdividend.service;
 
 import com.nikitoe.stockdividend.exception.impl.AlreadyExistUserException;
 import com.nikitoe.stockdividend.model.Auth;
+import com.nikitoe.stockdividend.model.Auth.SignUp;
+import com.nikitoe.stockdividend.model.Auth.SignUpResult;
 import com.nikitoe.stockdividend.persist.MemberRepository;
 import com.nikitoe.stockdividend.persist.entity.MemberEntity;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +31,7 @@ public class MemberService implements UserDetailsService {
 
     }
 
-    public MemberEntity register(Auth.SignUp member) {
+    public SignUpResult register(Auth.SignUp member) {
 
         boolean exists = this.memberRepository.existsByUsername(member.getUsername());
         if (exists) {
@@ -36,9 +39,9 @@ public class MemberService implements UserDetailsService {
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        var result = this.memberRepository.save(member.toEntity());
-        System.out.println("service" + result);
-        return result;
+        MemberEntity memberEntity= this.memberRepository.save(member.toEntity());
+
+        return SignUpResult.of(memberEntity);
     }
 
     public MemberEntity authenticate(Auth.SignIn member) {
