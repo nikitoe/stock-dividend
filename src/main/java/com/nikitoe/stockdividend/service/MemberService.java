@@ -1,6 +1,8 @@
 package com.nikitoe.stockdividend.service;
 
 import com.nikitoe.stockdividend.exception.impl.AlreadyExistUserException;
+import com.nikitoe.stockdividend.exception.impl.NoCorrectUserPassword;
+import com.nikitoe.stockdividend.exception.impl.NoUserException;
 import com.nikitoe.stockdividend.model.Auth;
 import com.nikitoe.stockdividend.model.Auth.SignUp;
 import com.nikitoe.stockdividend.model.Auth.SignUpResult;
@@ -27,7 +29,7 @@ public class MemberService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         return this.memberRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("couldn't find user -> " + username));
+            .orElseThrow(() -> new NoUserException());
 
     }
 
@@ -44,14 +46,14 @@ public class MemberService implements UserDetailsService {
         return SignUpResult.of(memberEntity);
     }
 
-    public MemberEntity authenticate(Auth.SignIn member) {
-        var user = this.memberRepository.findByUsername(member.getUsername())
-            .orElseThrow(() -> new RuntimeException("존재하지 않는 ID 입니다."));
+    public SignUpResult authenticate(Auth.SignIn member) {
+         MemberEntity memberEntity= this.memberRepository.findByUsername(member.getUsername())
+            .orElseThrow(() -> new NoUserException());
 
-        if (!this.passwordEncoder.matches(member.getPassword(), user.getPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        if (!this.passwordEncoder.matches(member.getPassword(), memberEntity.getPassword())) {
+            throw new NoCorrectUserPassword();
         }
 
-        return user;
+        return SignUpResult.of(memberEntity);
     }
 }

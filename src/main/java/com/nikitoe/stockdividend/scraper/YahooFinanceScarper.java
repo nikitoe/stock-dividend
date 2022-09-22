@@ -1,5 +1,6 @@
 package com.nikitoe.stockdividend.scraper;
 
+import com.nikitoe.stockdividend.exception.impl.CheckInputValueException;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.Dividend;
 import com.nikitoe.stockdividend.model.ScrapedResult;
@@ -88,10 +89,7 @@ public class YahooFinanceScarper implements Scraper {
             return new Company(ticker, title);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new CheckInputValueException();
         }
-
-        return null;
     }
-
 }
