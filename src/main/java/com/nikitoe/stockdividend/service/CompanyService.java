@@ -2,6 +2,7 @@ package com.nikitoe.stockdividend.service;
 
 import com.nikitoe.stockdividend.exception.impl.NoCompanyException;
 import com.nikitoe.stockdividend.model.Company;
+import com.nikitoe.stockdividend.model.CompanyPage;
 import com.nikitoe.stockdividend.model.ScrapedResult;
 import com.nikitoe.stockdividend.persist.CompanyRepository;
 import com.nikitoe.stockdividend.persist.DividendRepository;
@@ -37,8 +38,11 @@ public class CompanyService {
         return this.storeCompanyAndDividend(ticker);
     }
 
-    public Page<CompanyEntity> getAllCompany(Pageable pageable) {
-        return this.companyRepository.findAll(pageable);
+    public CompanyPage getAllCompany(Pageable pageable) {
+
+        Page<CompanyEntity> companyEntities = this.companyRepository.findAll(pageable);
+
+        return CompanyPage.of(companyEntities);
     }
 
     private Company storeCompanyAndDividend(String ticker) {
@@ -82,7 +86,7 @@ public class CompanyService {
     public List<String> autoComplete(String keyword) {
         return (List<String>) this.trie.prefixMap(keyword).keySet()
             .stream()
-            //.limit(10)
+            .limit(10)
             .collect(Collectors.toList());
     }
 
@@ -94,7 +98,7 @@ public class CompanyService {
 
     public String deleteCompany(String ticker) {
 
-        var company =this.companyRepository.findByTicker(ticker)
+        var company = this.companyRepository.findByTicker(ticker)
             .orElseThrow(() -> new NoCompanyException());
 
         // 배당금 정보 삭제

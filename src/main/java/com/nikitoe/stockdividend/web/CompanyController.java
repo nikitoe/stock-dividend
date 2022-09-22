@@ -1,6 +1,7 @@
 package com.nikitoe.stockdividend.web;
 
 import com.nikitoe.stockdividend.model.Company;
+import com.nikitoe.stockdividend.model.CompanyPage;
 import com.nikitoe.stockdividend.model.constants.CacheKey;
 import com.nikitoe.stockdividend.persist.entity.CompanyEntity;
 import com.nikitoe.stockdividend.service.CompanyService;
@@ -26,9 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CompanyController {
 
     private final CompanyService companyService;
-
     private final CacheManager redisCacheManager;
-
 
     /**
      * 키워드 자동완성
@@ -40,6 +39,7 @@ public class CompanyController {
 
         // Like 연산자 사용
         //var result = this.companyService.getCompanyNamesByKeyword(keyword);
+
         return ResponseEntity.ok(result);
     }
 
@@ -54,7 +54,7 @@ public class CompanyController {
     @PreAuthorize("hasRole('READ')")
     public ResponseEntity<?> searchCompany(final Pageable pageable) {
 
-        Page<CompanyEntity> companies = this.companyService.getAllCompany(pageable);
+        CompanyPage companies = this.companyService.getAllCompany(pageable);
         return ResponseEntity.ok(companies);
     }
 
