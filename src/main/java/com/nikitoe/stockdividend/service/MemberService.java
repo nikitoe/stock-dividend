@@ -4,11 +4,9 @@ import com.nikitoe.stockdividend.exception.impl.AlreadyExistUserException;
 import com.nikitoe.stockdividend.exception.impl.NoCorrectUserPassword;
 import com.nikitoe.stockdividend.exception.impl.NoUserException;
 import com.nikitoe.stockdividend.model.Auth;
-import com.nikitoe.stockdividend.model.Auth.SignUp;
 import com.nikitoe.stockdividend.model.Auth.SignUpResult;
 import com.nikitoe.stockdividend.persist.MemberRepository;
 import com.nikitoe.stockdividend.persist.entity.MemberEntity;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,13 +39,13 @@ public class MemberService implements UserDetailsService {
         }
 
         member.setPassword(this.passwordEncoder.encode(member.getPassword()));
-        MemberEntity memberEntity= this.memberRepository.save(member.toEntity());
+        MemberEntity memberEntity = this.memberRepository.save(member.toEntity());
 
         return SignUpResult.of(memberEntity);
     }
 
     public SignUpResult authenticate(Auth.SignIn member) {
-         MemberEntity memberEntity= this.memberRepository.findByUsername(member.getUsername())
+        MemberEntity memberEntity = this.memberRepository.findByUsername(member.getUsername())
             .orElseThrow(() -> new NoUserException());
 
         if (!this.passwordEncoder.matches(member.getPassword(), memberEntity.getPassword())) {

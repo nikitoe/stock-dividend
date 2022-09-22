@@ -60,7 +60,8 @@ public class TokenProvider {
     public Authentication getAuthentication(String jwt) {
         UserDetails userDetails = this.memberService.loadUserByUsername(this.getUsername(jwt));
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "",userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, "",
+            userDetails.getAuthorities());
     }
 
     public String getUsername(String token) {
@@ -74,7 +75,9 @@ public class TokenProvider {
      * @return
      */
     public boolean validToken(String token) {
-        if (!StringUtils.hasText(token)) return false;
+        if (!StringUtils.hasText(token)) {
+            return false;
+        }
 
         var claims = this.parseClaims(token);
         return !claims.getExpiration().before(new Date());

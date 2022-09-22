@@ -4,12 +4,10 @@ import com.nikitoe.stockdividend.exception.impl.EmptyTickerException;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.CompanyPage;
 import com.nikitoe.stockdividend.model.constants.CacheKey;
-import com.nikitoe.stockdividend.persist.entity.CompanyEntity;
 import com.nikitoe.stockdividend.service.CompanyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,7 +74,7 @@ public class CompanyController {
             throw new EmptyTickerException();
         }
 
-        log.info(ticker);
+        log.info("addCompany ticker value : " + ticker);
 
         Company company = this.companyService.save(ticker);
         this.companyService.addAutocompleteKeyword(company.getName());
@@ -93,6 +91,8 @@ public class CompanyController {
     @PreAuthorize("hasRole('WRITE')")
     public ResponseEntity<?> deleteCompany(@PathVariable String ticker) {
         String companyName = this.companyService.deleteCompany(ticker);
+
+        log.info("deleteCompany ticker value : " + ticker);
 
         // 캐시 정보 삭제
         this.clearFinanceCache(companyName);
