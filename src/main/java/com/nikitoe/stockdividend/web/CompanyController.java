@@ -1,11 +1,13 @@
 package com.nikitoe.stockdividend.web;
 
+import com.nikitoe.stockdividend.exception.impl.EmptyTickerException;
 import com.nikitoe.stockdividend.model.Company;
 import com.nikitoe.stockdividend.model.CompanyPage;
 import com.nikitoe.stockdividend.model.constants.CacheKey;
 import com.nikitoe.stockdividend.persist.entity.CompanyEntity;
 import com.nikitoe.stockdividend.service.CompanyService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/company")
@@ -70,8 +73,10 @@ public class CompanyController {
 
         String ticker = request.getTicker().trim();
         if (ObjectUtils.isEmpty(ticker)) {
-            throw new RuntimeException("ticker is empty");
+            throw new EmptyTickerException();
         }
+
+        log.info(ticker);
 
         Company company = this.companyService.save(ticker);
         this.companyService.addAutocompleteKeyword(company.getName());
